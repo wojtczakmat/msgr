@@ -4,12 +4,51 @@ namespace msgr
 {
     public class User
     {
-        public string userName;
-        public string userID;
-        public bool isActive;
-        public DateTime lastSeen;
-
-        public User(string userID, string userName)
+        private string userName;
+        public string UserName
+        {
+            get
+            {
+                return userName;
+            }
+            set
+            {
+                userName = value;
+            }
+        }
+        private string userID;
+        public string UserID
+        {
+            get
+            {
+                return userID;
+            }
+        }
+        private bool isActive;
+        public bool IsActive
+        {
+            get
+            {
+                return isActive;
+            }
+            set
+            {
+                isActive = value;
+            }
+        }
+        private DateTime lastSeen;
+        public DateTime LastSeen
+        {
+            get
+            {
+                return lastSeen;
+            }
+            set
+            {
+                lastSeen = value;
+            }
+        }
+        private User(string userID, string userName)
         {
             this.userID = userID;
             this.userName  = userName;
