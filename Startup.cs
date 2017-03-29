@@ -7,6 +7,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using msgr.Models;
 using msgr.Services;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.Http;
+using msgr.Providers;
 
 namespace msgr
 {
@@ -31,6 +34,8 @@ namespace msgr
             services.AddMvc();
             services.AddTransient<IRepository<User>, UserRepository>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<ICurrentUserProvider, CurrentUserProvider>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -42,12 +47,21 @@ namespace msgr
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCookieAuthentication(new CookieAuthenticationOptions()
+                {
+                    AuthenticationScheme = "Cookies",
+                    LoginPath = new PathString("/Account/Login"),
+                    AccessDeniedPath = new PathString("/Account/Forbidden"),
+                    AutomaticAuthenticate = true,
+                    AutomaticChallenge = true
+                });
+
             app.UseMvc(routes => 
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
+                {
+                    routes.MapRoute(
+                        name: "default",
+                        template: "{controller=Home}/{action=Index}/{id?}");
+                });
 
             // app.Run(async (context) =>
             // {

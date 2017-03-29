@@ -1,7 +1,9 @@
+using System;
+
 namespace msgr.Services
 {
     public interface IUserService
     {
-        bool Check(string username, string passwordHash);
+        Guid? Check(string username, string passwordHash);
     }
 }

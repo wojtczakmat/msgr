@@ -14,12 +14,12 @@ namespace msgr.Services
             this.dbContext = dbContext;
         }
 
-        public bool Check(string username, string passwordHash)
+        public Guid? Check(string username, string passwordHash)
         {
             User user = dbContext.Users.Where(x => x.UserName == username).SingleOrDefault();
             if (user == null)
-                return false;
-            return user.PasswordHash == passwordHash;
+                return null;
+            return user.PasswordHash == passwordHash ? (Guid?)user.Id : null;
         }
     }
 }
