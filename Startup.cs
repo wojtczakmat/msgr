@@ -6,6 +6,7 @@ using msgr.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using msgr.Models;
+using msgr.Services;
 
 namespace msgr
 {
@@ -29,6 +30,7 @@ namespace msgr
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddMvc();
             services.AddTransient<IRepository<User>, UserRepository>();
+            services.AddTransient<IUserService, UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
