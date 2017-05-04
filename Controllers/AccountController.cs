@@ -15,11 +15,9 @@ namespace msgr.Controllers
     public class AccountController : Controller
     {
         private readonly IUserService userService;
-        private readonly IRepository<User> userRepository;
         private readonly ICurrentUserProvider currentUserProvider;
-        public AccountController(IRepository<User> userRepository, IUserService userService, ICurrentUserProvider currentUserProvider)
+        public AccountController(IUserService userService, ICurrentUserProvider currentUserProvider)
         {
-            this.userRepository = userRepository;
             this.userService = userService;
             this.currentUserProvider = currentUserProvider;
         }
@@ -50,14 +48,15 @@ namespace msgr.Controllers
                 var p = new ClaimsPrincipal(id);
 
                 await HttpContext.Authentication.SignInAsync("Cookies", p);
+                
             }
-            return userId.HasValue ? "Zalogowano!" : "Nie udało się zalogować";
+            return userId.HasValue ? "Zalogowano!" : "Nie udało się zalogować";
         }
-
+        
         public async Task<IActionResult> Logout()
         {
             await HttpContext.Authentication.SignOutAsync("Cookies");
-            return RedirectToAction("Home", "Index");
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
@@ -70,7 +69,7 @@ namespace msgr.Controllers
         public RedirectToActionResult Register(RegisterUserVM vm)
         {
             Models.User newUser = Models.User.Create(vm.Username, HashHelper.GenerateHash(vm.Password));
-            userRepository.Add(newUser);
+            userService.Add(newUser);
             return RedirectToAction("Index", "Home");
         }
     }

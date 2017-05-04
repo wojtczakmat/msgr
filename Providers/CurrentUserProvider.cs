@@ -11,9 +11,11 @@ namespace msgr.Providers
             this.httpContextAccessor = httpContextAccessor;
         }
         public Guid? GetCurrentUserId()
-        {
+        {     
             var user = httpContextAccessor.HttpContext.User;
-            if (user == null)
+            
+            
+            if (user.FindFirst("sub") == null)
                 return null;
             return Guid.Parse(user.FindFirst("sub").Value);
         }

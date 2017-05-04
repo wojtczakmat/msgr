@@ -14,12 +14,23 @@ namespace msgr.Services
             this.dbContext = dbContext;
         }
 
+        public void Add(User user)
+        {
+            dbContext.Add(user);
+            dbContext.SaveChanges();
+        }
+
         public Guid? Check(string username, string passwordHash)
         {
             User user = dbContext.Users.Where(x => x.UserName == username).SingleOrDefault();
             if (user == null)
                 return null;
             return user.PasswordHash == passwordHash ? (Guid?)user.Id : null;
+        }
+
+        public User GetUserById(Guid userId)
+        {
+            return dbContext.Users.Where(x => x.Id == userId).SingleOrDefault();
         }
     }
 }
