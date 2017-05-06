@@ -22,10 +22,10 @@ namespace msgr.ViewComponents
             var currentUserId = currentUserProvider.GetCurrentUserId();
             if (currentUserId != null)
             {
-                User user = userService.GetUserById(currentUserId.Value);
+                User user =  userService.GetUserById(currentUserId.Value);
                 return View("LoggedIn", user);
             }
-            return View("Login");
+            return View("NotLoggedIn");
         }
     }
 }

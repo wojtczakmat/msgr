@@ -21,10 +21,10 @@ namespace msgr.Controllers
             this.userService = userService;
             this.currentUserProvider = currentUserProvider;
         }
-        public string Index()
+
+        public ViewResult Index()
         {
-            var id = currentUserProvider.GetCurrentUserId();
-            return id.HasValue ? id.Value.ToString() : "none";
+            return View();
         }
 
         [HttpGet]
@@ -38,18 +38,10 @@ namespace msgr.Controllers
         {
             string hash = HashHelper.GenerateHash(password);
             Guid? userId = userService.Check(username, hash);
+
             if (userId.HasValue)
-            {
-                var claims = new List<Claim>() {
-                    new Claim("sub", userId.Value.ToString())
-                };
-
-                var id = new ClaimsIdentity(claims);
-                var p = new ClaimsPrincipal(id);
-
-                await HttpContext.Authentication.SignInAsync("Cookies", p);
+                await userService.LogIn(userId.Value, HttpContext);
                 
-            }
             return userId.HasValue ? "Zalogowano!" : "Nie udało się zalogować";
         }
         
@@ -62,7 +54,7 @@ namespace msgr.Controllers
         [HttpGet]
         public ViewResult Register()
         {
-            return View();
+            return currentUserProvider.GetCurrentUserId() == null ? View() : View("Index");
         }
 
         [HttpPost]
@@ -70,6 +62,7 @@ namespace msgr.Controllers
         {
             Models.User newUser = Models.User.Create(vm.Username, HashHelper.GenerateHash(vm.Password));
             userService.Add(newUser);
+            userService.LogIn(newUser.Id, HttpContext);
             return RedirectToAction("Index", "Home");
         }
     }
